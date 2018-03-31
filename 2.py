@@ -479,7 +479,7 @@ for axx,n_hidden_nodes in zip(axes,[10,100]):
                             alpha=alpha)
         mlp.fit(X_train,y_train)
         mglearn.plots.plot_2d_separator(mlp,X_train,fill=True,alpha=.3,ax=ax)
-        mglearn.discrete_scatter(X_train[:,0],X _train[:,1],y_train,ax=ax)
+        mglearn.discrete_scatter(X_train[:,0],X_train[:,1],y_train,ax=ax)
         ax.set_title("n_hidden=[{},{}]\nalpha={:.4f}".format(n_hidden_nodes,n_hidden_nodes,alpha))
         
 fig,axes = plt.subplots(2,4,figsize=(20,8))
@@ -496,7 +496,7 @@ print(mlp.score(X_train,y_train))
 print(mlp.score(X_test,y_test))
 
 plt.figure(figsize=(20,5))
-plt.imshow(mlp.coefs_[0],interpola tion='none',cmap='viridis')
+plt.imshow(mlp.coefs_[0],interpolation='none',cmap='viridis')
 plt.yticks(range(30),cancer.feature_names)
 plt.xlabel("columns in weight matrix")
 plt.ylabel("input feature")
@@ -538,3 +538,30 @@ for ax in axes:
     ax.set_ylabel("feature 1")
 cbar = plt.colorbar(scores_image,ax=axes.tolist())
 axes[0].legend(["test class 0","test class 1","train class 0","train class 1"],ncol=4,loc=(.1,1.1))
+
+print(gbrt.predict_proba(X_test).shape)
+
+print(gbrt.predict_proba(X_test[:6]))
+
+fig,axes = plt.subplots(1,2,figsize=(13,5))
+
+mglearn.tools.plot_2d_separator(
+        gbrt,X,ax=axes[0],alpha=.4,fill=True,cm=mglearn.cm2)
+scores_image = mglearn.tools.plot_2d_scores(
+        gbrt,X,ax=axes[1],alpha=.5,cm=mglearn.ReBl,function='predict_proba')
+for ax in axes:
+    mglearn.discrete_scatter(X_test[:,0],X_test[:,1],y_test,markers='^',ax=ax)
+    mglearn.discrete_scatter(X_train[:,0],X_train[:,1],y_train,markers='o',ax=ax)
+    ax.set_xlabel("feature 0")
+    ax.set_ylabel("feature 1")
+cbar = plt.colorbar(scores_image,ax=axes.tolist())
+axes[0].legend(["test class 0","test class 1","train class 0","train class 1"],ncol=4,loc=(.1,1.1))
+
+from sklearn.datasets import load_iris
+iris = load_iris()
+X_train,X_test,y_train,y_test = train_test_split(iris.data,iris.target,random_state=42)
+gbrt = GradientBoostingClassifier(learning_rate=0.01,random_state=0)
+gbrt.fit(X_train,y_train)
+
+print(gbrt.decision_function(X_test).shape)
+print(gbrt.decision_function(X_test)[:6,:]) 
